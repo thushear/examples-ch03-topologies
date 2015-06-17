@@ -1,5 +1,8 @@
 package countword;
 
+import backtype.storm.StormSubmitter;
+import backtype.storm.generated.AlreadyAliveException;
+import backtype.storm.generated.InvalidTopologyException;
 import countword.spouts.SignalsSpout;
 import countword.spouts.WordReader;
 import countword.bolts.WordCounter;
@@ -11,7 +14,8 @@ import backtype.storm.tuple.Fields;
 
 
 public class TopologyMain {
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws InterruptedException, AlreadyAliveException,
+			InvalidTopologyException {
         
         //Topology definition
 		TopologyBuilder builder = new TopologyBuilder();
@@ -31,9 +35,10 @@ public class TopologyMain {
 		conf.setDebug(true);
         //Topology run
 		conf.put(Config.TOPOLOGY_MAX_SPOUT_PENDING, 1);
-		LocalCluster cluster = new LocalCluster();
+		StormSubmitter.submitTopology("Count-Word-With_refresh-cache-2",conf,builder.createTopology());
+		/*LocalCluster cluster = new LocalCluster();
 		cluster.submitTopology("Count-Word-Toplogy-With-Refresh-Cache", conf, builder.createTopology());
 		Thread.sleep(5000);
-		cluster.shutdown();
+		cluster.shutdown();*/
 	}
 }
